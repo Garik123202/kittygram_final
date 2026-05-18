@@ -2,10 +2,12 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Устанавливаем системные зависимости для psycopg2 и Pillow
+# Устанавливаем все необходимые системные зависимости
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     gcc \
+    zlib1g-dev \
+    libjpeg-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
