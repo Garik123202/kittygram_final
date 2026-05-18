@@ -2,7 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-RUN pip install gunicorn==20.1.0
+# Устанавливаем системные зависимости для psycopg2 и Pillow
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 
