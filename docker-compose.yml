@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:13
@@ -27,16 +25,13 @@ services:
       db:
         condition: service_healthy
     restart: always
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             gunicorn --bind 0.0.0.0:8000 kittygram_backend.wsgi"
+    command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 kittygram_backend.wsgi"
 
   frontend:
     build: ./frontend
     container_name: frontend
     volumes:
-      - static:/app/build/static
+      - frontend_build:/app/build
     depends_on:
       - backend
     restart: always
@@ -45,10 +40,11 @@ services:
     build: ./nginx
     container_name: gateway
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - static:/static
       - media:/media
+      - frontend_build:/usr/share/nginx/html
     depends_on:
       - backend
       - frontend
@@ -58,3 +54,4 @@ volumes:
   pg_data:
   static:
   media:
+  frontend_build:
